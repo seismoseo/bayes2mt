@@ -1,0 +1,25 @@
+name: bayes2mt
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy=2.2
+  - scipy
+  - pandas=2.2
+  - matplotlib=3.10
+  - obspy
+  - numba
+  - cvxpy
+  - scs
+  - clarabel
+  - arviz
+  - ipywidgets          # classic Notebook 6 servers need ipywidgets>=7.8,<8 instead (README)
+  - jupyterlab
+  - nbconvert
+  - ipykernel
+  - pytest
+  - cxx-compiler        # BayesBay builds a small C++ extension
+  - pip
+  - pip:
+      - bayesbay==0.3.4
+      - -e .

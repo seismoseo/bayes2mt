@@ -1,0 +1,19 @@
+{
+ "description": "2020-05-03 Mw 3.4 earthquake, Haenam, South Korea, and its empirical Green's function event",
+ "origin_time": "2020-05-03T13:07:14.9",
+ "latitude": 34.6628,
+ "longitude": 126.4013,
+ "depth_km": 20.58,
+ "mw": 3.39,
+ "strike": 108.0,
+ "dip": 58.0,
+ "rake": 11.0,
+ "auxiliary_plane": [
+  12.0,
+  81.0,
+  148.0
+ ],
+ "vp_km_s": 6.228,
+ "vs_km_s": 3.6,
+ "egf_origin_time": "2020-04-28T03:52:01"
+}

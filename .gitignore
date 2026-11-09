@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+build/
+dist/
+# internal development notes (not published)
+docs/dev/
+# outputs of the example notebooks
+examples/picker_output/
+examples/tauc_table.csv
