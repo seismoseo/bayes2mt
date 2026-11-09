@@ -66,7 +66,8 @@ def test_duration_table_matches_shipped_table(picker):
     pub = pub[pub["phase"] == "S"].set_index("code").loc[tab.index]
     assert list(tab.reset_index().columns) == io.TABLE_COLUMNS
     for col in ["latitude", "longitude", "azimuth", "vr", "tauc", "t1", "toa"]:
-        np.testing.assert_allclose(tab[col], pub[col], rtol=0, atol=1e-9, err_msg=col)
+        # round-off differs between numpy/scipy builds (~1e-8 relative), so not bit-exact
+        np.testing.assert_allclose(tab[col], pub[col], rtol=1e-6, atol=1e-9, err_msg=col)
 
 
 def test_reject_removes_output_and_resume(picker, tmp_path):
