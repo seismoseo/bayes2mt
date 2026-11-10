@@ -5,6 +5,7 @@
  "longitude": 126.4013,
  "depth_km": 20.58,
  "mw": 3.39,
+ "ml": 3.1,
  "strike": 108.0,
  "dip": 58.0,
  "rake": 11.0,
@@ -15,5 +16,6 @@
  ],
  "vp_km_s": 6.228,
  "vs_km_s": 3.6,
- "egf_origin_time": "2020-04-28T03:52:01"
+ "egf_origin_time": "2020-04-28T03:52:01",
+ "egf_ml": 2.1
 }
