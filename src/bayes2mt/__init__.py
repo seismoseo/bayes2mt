@@ -18,6 +18,6 @@ io, config     file formats and constants
 """
 from . import config, geometry, io, moments, pld, relloc, stressdrop, synthetic
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = ["config", "geometry", "io", "moments", "pld", "relloc", "stressdrop", "synthetic"]

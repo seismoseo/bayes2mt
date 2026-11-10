@@ -85,7 +85,14 @@ def plot_astfs_by_azimuth(panels, highlight=None, scale=0.7, xlim=None, titles=P
     for ax, (title, color), (astfs, azimuths, onsets) in zip(axes, titles, panels):
         _panel(ax, astfs, azimuths, onsets, color, title, highlight, scale, xlim)
     axes[0].set_ylabel("Azimuth (°)", fontsize=20, labelpad=10)
+    # panel labels: left edge at the left edge of the y-axis label, baseline on the panel-title
+    # baseline; the same offset from every panel
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    dx = (axes[0].yaxis.label.get_window_extent(renderer).x0
+          - axes[0].get_window_extent(renderer).x0)
     for i, ax in enumerate(axes):
-        pos = ax.get_position()
-        fig.text(pos.x0 - 0.030, pos.y1 + 0.012, f"({chr(97 + i)})", fontsize=20, fontweight="bold")
+        ax.text(dx / ax.get_window_extent(renderer).width, ax.title.get_position()[1],
+                f"({chr(97 + i)})", transform=ax.title.get_transform(), ha="left", va="baseline",
+                fontsize=20, fontweight="bold")
     return fig, axes

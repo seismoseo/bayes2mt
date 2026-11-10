@@ -122,6 +122,10 @@ def plot_ellipses(ax, best, samples, indices, extent=None):
     """Panel (b): posterior samples ``indices`` (gray ellipses, light-blue
     arrows) and the best-fitting model (black ellipse, blue arrow).
 
+    The many faint sample outlines are rasterized (embedded as an image when
+    saved as SVG or PDF; give ``savefig`` a ``dpi``): drawn as vector
+    hairlines, PDF viewers widen them to one pixel and they look nearly black.
+
     ``best`` and ``samples`` are outputs of ``moments.physical``.  Ellipse
     semi-axes are Lc and Wc rotated by theta^Lc; arrows are centred on the
     centroid, point along theta^v0 and are |v0| tau_c long.  The y axis
@@ -137,10 +141,12 @@ def plot_ellipses(ax, best, samples, indices, extent=None):
         lc, wc, rk = samples["Lc"][i], samples["Wc"][i], np.deg2rad(samples["rake"][i])
         half = lc / 2 * samples["dir_ratio"][i]
         ax.add_patch(patches.Ellipse((0, 0), 2 * lc, 2 * wc, angle=samples["angle"][i], ec="k",
-                                     linewidth=0.1, fill=False, zorder=2, alpha=0.2))
+                                     linewidth=0.1, fill=False, zorder=2, alpha=0.2,
+                                     rasterized=True))
         if samples["v0"][i] > 0:
             ax.arrow(-half * np.cos(rk), -half * np.sin(rk), 2 * half * np.cos(rk),
-                     2 * half * np.sin(rk), width=10, color=ENSEMBLE_COLOR, zorder=10, alpha=0.05)
+                     2 * half * np.sin(rk), width=10, color=ENSEMBLE_COLOR, zorder=10, alpha=0.05,
+                     rasterized=True)
     rk = np.deg2rad(best["rake"])
     half = best["Lc"] / 2 * best["dir_ratio"]
     ax.add_patch(patches.Ellipse((0, 0), 2 * best["Lc"], 2 * best["Wc"], angle=best["angle"],
@@ -225,9 +231,11 @@ def plot_symbol_key(ax, mechanism, target_label, egf_label, rng, best_label="Bes
         w, h = 0.15 + rng.uniform(-0.03, 0.03), 0.08 + rng.uniform(-0.02, 0.02)
         a = 30 + rng.uniform(-10, 10)
         ax.add_patch(patches.Ellipse((0.15, y_ens), width=w, height=h, angle=a, ec="k",
-                                     linewidth=0.1, fill=False, alpha=0.3, zorder=1))
+                                     linewidth=0.1, fill=False, alpha=0.3, zorder=1,
+                                     rasterized=True))
         dx, dy = 0.05 + rng.uniform(-0.01, 0.01), -0.04 + rng.uniform(-0.01, 0.01)
-        ax.arrow(0.15, y_ens, dx, dy, head_width=0.02, color=ENSEMBLE_COLOR, alpha=0.1, zorder=2)
+        ax.arrow(0.15, y_ens, dx, dy, head_width=0.02, color=ENSEMBLE_COLOR, alpha=0.1, zorder=2,
+                 rasterized=True)
     ax.text(0.28, y_ens, "Posterior ensemble", ha="left", va="center", fontsize=14)
 
 

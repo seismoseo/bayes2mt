@@ -25,8 +25,9 @@ python -m ipykernel install --user --name bayes2mt
 
 You can also run `pip install -e ".[all]"` in an existing environment. BayesBay needs a C++ compiler.
 
-The picker needs widgets. If you use the classic Jupyter Notebook 6, run
-`pip install "ipywidgets>=7.8,<8"`; otherwise the picker shows only `VBox(...)`.
+The picker needs widgets (ipywidgets 8, for JupyterLab 4, Notebook 7 and VS Code). For the classic Jupyter
+Notebook 6, run `pip install "ipywidgets>=7.8,<8"` instead; with a mismatch the picker shows only `VBox(...)` or an
+error that `@jupyter-widgets/controls` is not registered.
 
 ## Quick start
 

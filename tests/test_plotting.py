@@ -69,3 +69,40 @@ def test_retrieval_figure_keeps_the_interactive_flag(monkeypatch):
         assert matplotlib.rcParams["font.size"] == font_size
     finally:
         matplotlib.interactive(False)
+
+
+def test_azimuth_panel_labels_align_with_ylabel_and_titles():
+    import matplotlib.pyplot as plt
+    from bayes2mt.io import ASTF
+    from bayes2mt.plotting.azimuth import plot_astfs_by_azimuth
+    t = np.arange(0, 0.2, 0.01)
+    f = np.interp(t, [0, 0.05, 0.1], [0, 1, 0])
+    panels = [([ASTF(t, f, 90.0, code=f"S{k}")], np.array([30.0 * k + 10]), np.array([0.0]))
+              for k in range(3)]
+    fig, axes = plot_astfs_by_azimuth(panels)
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    pt = 72 / fig.dpi
+    labels = [[t for t in ax.texts if t.get_text() == f"({c})"][0] for ax, c in zip(axes, "abc")]
+    ylabel = axes[0].yaxis.label.get_window_extent(r)
+    assert abs(labels[0].get_window_extent(r).x0 - ylabel.x0) * pt < 0.01
+    offsets = [(lab.get_window_extent(r).x0 - ax.get_window_extent(r).x0) * pt for lab, ax in zip(labels, axes)]
+    assert np.ptp(offsets) < 0.01
+    for lab, ax in zip(labels, axes):
+        base = lab.get_transform().transform((0, lab.get_position()[1]))[1]
+        title = ax.title.get_transform().transform((0, ax.title.get_position()[1]))[1]
+        assert abs(base - title) * pt < 0.01
+    plt.close(fig)
+
+
+def test_only_the_posterior_ensemble_is_rasterized():
+    import matplotlib.pyplot as plt
+    from bayes2mt.plotting.inversion import plot_ellipses
+    post = _posterior()
+    best = {k: float(np.median(v)) for k, v in post.items()}
+    fig, ax = plt.subplots()
+    plot_ellipses(ax, best, post, np.arange(50))
+    raster = [a for a in ax.patches if a.get_rasterized()]
+    vector = [a for a in ax.patches if not a.get_rasterized()]
+    assert len(raster) == 100 and len(vector) == 2      # 50 ellipses + 50 arrows; the best ellipse and arrow
+    plt.close(fig)
