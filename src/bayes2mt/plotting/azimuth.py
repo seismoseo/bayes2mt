@@ -3,7 +3,7 @@ Seo et al., 2026).
 
 One panel per phase (direct P, direct S, SmS by default).  Each ASTF is scaled
 to unit area and drawn at its station azimuth; one station can be highlighted
-(bold line and red label).  Short black bars mark the onset times predicted
+(thick line and red label).  Short black bars mark the onset times predicted
 from the relative location of the target and its EGF
 (``relloc.predict_onsets``): with origin-time alignment, an ASTF starts at the
 differential travel time.
@@ -26,7 +26,7 @@ def _panel(ax, astfs, azimuths, onsets, color, title, highlight, scale, xlim):
         ax.fill_between(astf.t, az, f, color=color, alpha=0.3, zorder=9)
         ax.vlines(x=onset, ymin=az - 2, ymax=az + 2, color="k", lw=2, zorder=20)
         if astf.code == highlight:
-            ax.text(s=astf.code, x=xlim[0] + 0.005, y=az, color="r", fontsize=14, fontweight="bold",
+            ax.text(s=astf.code, x=xlim[0] + 0.005, y=az, color="r", fontsize=14,
                     bbox=dict(facecolor="white", edgecolor="none", alpha=0.9, pad=1.5), zorder=30)
             ax.plot(astf.t, f, lw=3.0, color=color, alpha=1.0, zorder=10)
         else:
@@ -70,7 +70,7 @@ def plot_astfs_by_azimuth(panels, highlight=None, scale=0.7, xlim=None, titles=P
                direct P, direct S and SmS; ``astfs`` are ``io.ASTF`` objects
                (already quality-controlled), ``onsets`` the predicted onset
                times (``relloc.predict_onsets``)
-    highlight: station drawn in bold with a red label (optional)
+    highlight: station drawn with a thick line and a red label (optional)
     scale    : height [deg of azimuth] of a unit-area ASTF per second
     xlim     : time range [s]; default: every support and onset (``time_limits``)
     titles   : (title, colour) per panel
@@ -94,5 +94,5 @@ def plot_astfs_by_azimuth(panels, highlight=None, scale=0.7, xlim=None, titles=P
     for i, ax in enumerate(axes):
         ax.text(dx / ax.get_window_extent(renderer).width, ax.title.get_position()[1],
                 f"({chr(97 + i)})", transform=ax.title.get_transform(), ha="left", va="baseline",
-                fontsize=20, fontweight="bold")
+                fontsize=20)
     return fig, axes

@@ -5,9 +5,13 @@
     subject to X = [[mu02, mu11^T], [mu11, mu20]]  positive semidefinite,
                mu02 <= 2 max(b)
 
-The default solver is SCS with ``max_iters=10000``; the interior-point
-solver ``solver="CLARABEL"`` converges more tightly (4th-5th significant
-digit).  The problem is
+The durations are divided by their median before solving and the moments
+are scaled back afterwards (``m2 * scale**2``).  Without this the objective
+is of order 1e-9 s^4, far below the default stopping tolerances of the conic
+solvers, which then report an optimal solution that can be several
+variance-reduction points from the optimum; with it, SCS (default,
+``max_iters=10000``) and the interior-point solver CLARABEL agree to 0.001
+points.  The variance reduction does not depend on the scale.  The problem is
 built once with CVXPY parameters (disciplined parametrised programming), so
 re-solving it for bootstrap resamples or the second nodal plane does not
 rebuild it.
@@ -37,12 +41,17 @@ class SDP:
         self.problem = cp.Problem(cp.Minimize(misfit), [X[0, 0] <= 2 * self.bmax])
 
     def solve(self, G, tauc, solver="SCS", **kwargs):
+        """Moments [s^2, s km, km^2] that fit the durations ``tauc`` [s]."""
         if solver == "SCS":
             kwargs.setdefault("max_iters", 10000)
-        b = (np.asarray(tauc, float) / 2) ** 2
+        tauc = np.asarray(tauc, float)
+        scale = float(np.median(tauc))
+        b = (tauc / scale / 2) ** 2
         self.G.value, self.b.value, self.bmax.value = np.asarray(G, float), b, float(b.max())
         self.problem.solve(solver=solver, **kwargs)
-        return np.asarray(self.m.value, float)
+        if self.problem.status not in ("optimal", "optimal_inaccurate"):
+            raise RuntimeError(f"SDP not solved: {self.problem.status}")
+        return np.asarray(self.m.value, float) * scale ** 2
 
 
 @dataclass
@@ -81,8 +90,7 @@ def bootstrap(table, strike, dip, vp, vs, n=1000, seed=620, solver="SCS", **kwar
     """Bootstrap the SDP by resampling stations with replacement.
 
     Resampling uses ``DataFrame.sample(frac=1, replace=True)`` with a
-    ``RandomState(seed)``, the same draws as the original notebooks (which
-    called ``np.random.seed(620)`` and sampled from the global state).
+    ``RandomState(seed)``.
     Returns an (n, 6) array of moment vectors.
     """
     rng = np.random.RandomState(seed)

@@ -38,7 +38,7 @@ COLOR_S, COLOR_SMS = "b", "purple"
 
 @dataclass
 class RetrievalWaveforms:
-    """Windows of panels (a)-(c), cut as in the original figure notebook.
+    """Windows of panels (a)-(c).
 
     Times are seconds from the start of each window.  ``sms_offset`` [s] is
     the SmS pick minus the S pick of the target, used to place the SmS
@@ -119,7 +119,7 @@ def retrieval_waveforms(tr_main, tr_egf, astf_s, astf_sms, pick_s=None, pick_sms
 
 
 def _label(ax, text, x, y):
-    ax.text(x, y, text, transform=ax.transAxes, fontsize=24, fontweight="bold", va="top", ha="right")
+    ax.text(x, y, text, transform=ax.transAxes, fontsize=24, va="top", ha="right")
 
 
 def _panel_waveforms(ax, wf, station, distance_km, azimuth, ml_target, ml_egf):
@@ -140,7 +140,7 @@ def _panel_waveforms(ax, wf, station, distance_km, azimuth, ml_target, ml_egf):
     ax.set_yticks([])
     ax.set_xlabel("Time (s)", fontsize=20, labelpad=15)
     ax.text(x=0.05, y=3.15, s=f"Station {station} ($\\Delta$={int(distance_km)} km / Az.={int(azimuth)}°)",
-            fontsize=20, weight="bold")
+            fontsize=20)
     ax.text(x=-0.45, y=2.2, s="Target", fontsize=20)
     if ml_target is not None:
         ax.text(x=-0.45, y=1.7, s=f"$M_L$ {ml_target:.1f}", fontsize=20)

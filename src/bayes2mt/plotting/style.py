@@ -1,9 +1,11 @@
 """Figure style shared by all plotting functions.
 
-Helvetica is used when available, as in the paper's figures.  Point the
-``BAYES2MT_FONT_DIR`` environment variable at a folder of Helvetica font files
+Helvetica is used when available.  Point the ``BAYES2MT_FONT_DIR``
+environment variable at a folder of Helvetica font files (regular and bold)
 if they are not installed system-wide; otherwise Arial, then DejaVu Sans, is
-used.  Labels are in sentence case and every panel keeps all four spines.
+used.  Text is in regular weight except the heading of the symbol key of the
+SDM summary figure.  Labels are in sentence case and every panel keeps all
+four spines.
 """
 from __future__ import annotations
 
@@ -30,6 +32,6 @@ def use_style():
 
 
 def panel_label(ax, text, x=-0.18, y=1.05, size=20):
-    """Bold panel label such as "(a)" at the upper left of an axes."""
-    ax.text(x, y, text, transform=ax.transAxes, fontsize=size, fontweight="bold",
+    """Panel label such as "(a)" at the upper left of an axes."""
+    ax.text(x, y, text, transform=ax.transAxes, fontsize=size,
             va="bottom", ha="right", zorder=100)

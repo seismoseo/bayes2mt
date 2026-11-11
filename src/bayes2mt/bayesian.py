@@ -46,8 +46,8 @@ class Noise:
 
 
 def starting_states(priors, n_chains, seed=SEED):
-    """Starting models drawn from the priors in the order of the original
-    notebooks (chain by chain, x0..x5), so a run can be repeated exactly."""
+    """Starting models drawn from the priors chain by chain (x0..x5 for each
+    chain) with ``RandomState(seed)``, so the starting models can be repeated."""
     from bayesbay._state import ParameterSpaceState, State
     rng = np.random.RandomState(seed)
     states = []
@@ -70,9 +70,8 @@ def build(G, tauc, priors=None, noise=None, n_chains=20, seed=SEED):
     keys = [f"m{i}" for i in range(6)]
 
     def forward(state):
-        # the expression and array shapes of the original notebooks, so the
-        # predictions are bit-identical to theirs; per call this is faster than
-        # cholesky_to_m2, which is written for whole ensembles
+        # one model per call; faster than cholesky_to_m2, which is written for
+        # whole ensembles
         x0, x1, x2, x3, x4, x5 = [state[PARAM_SPACE][k] for k in keys]
         a0, a3 = 10 ** x0, 10 ** x3
         m2 = np.array([10 ** (2 * x0), a0 * x1, a0 * x2, x1 * x1 + 10 ** (2 * x3),

@@ -108,7 +108,7 @@ If you use bayes2mt, please cite
 
 > Seo, M.-S., Han, S., Kim, W.-Y., & Kim, Y. (2026). Rupture properties, source scaling, and directivity of
 > small intraplate earthquakes: insights from a dense seismic network and Moho-reflected phases in the southern
-> Korean Peninsula. *Journal of Geophysical Research: Solid Earth* (in revision).
+> Korean Peninsula. *Journal of Geophysical Research: Solid Earth*.
 
 together with the methods and software below that your work relies on. The data and scripts of the paper are
 archived at [doi:10.5281/zenodo.19887457](https://doi.org/10.5281/zenodo.19887457).

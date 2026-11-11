@@ -9,11 +9,11 @@ take-off direction (az, toa) gives
     t1 = t0 - (L / V) cos(theta),
     cos(theta) = cos(toa) cos(delta) + sin(toa) sin(delta) cos(phi - az),
 
-with V the P or S speed at the source and t0 a common shift.  The original
-analysis searched a coarse grid (phi, delta every 5 deg, t0 every 10 ms,
-L every 10 m) and then a fine grid around the best coarse point.  Here the
-misfit for all (t0, L) pairs of a given direction is evaluated at once from
-sufficient statistics, so both grids take seconds instead of minutes.
+with V the P or S speed at the source and t0 a common shift.  ``locate``
+searches a coarse grid (phi, delta every 5 deg, t0 every 10 ms, L every 10 m)
+and then a fine grid around the best coarse point.  The misfit for all
+(t0, L) pairs of a given direction is evaluated at once from sufficient
+statistics, so both grids take seconds.
 """
 from __future__ import annotations
 
@@ -53,14 +53,18 @@ def _grid_misfit(phi, delta, t0, L, az, toa, invv, t1):
     return np.sqrt(np.clip(ss, 0, None) / n)
 
 
-def locate(table, vp=3600 * 1.73, vs=3600.0, legacy_refinement=False):
+def locate(table, vp=3600 * 1.73, vs=3600.0, refinement="minimum"):
     """Grid-search the target-EGF offset from a duration table with columns
     ``t1``, ``azimuth``, ``toa`` and ``phase`` (SmS uses the S speed).
 
-    ``legacy_refinement=True`` reproduces the original notebook, whose fine
-    search kept the LAST fine-grid point with misfit below the coarse
-    optimum rather than the minimum; the default returns the true minimum.
+    refinement : which point of the fine grid is returned; "minimum" (default)
+                 the point with the smallest misfit, "last" the last point in
+                 grid order whose misfit is below that of the coarse optimum
+                 (the rule used by Seo et al., 2026).  If no fine-grid point
+                 improves on the coarse optimum, the coarse optimum is returned.
     """
+    if refinement not in ("minimum", "last"):
+        raise ValueError("refinement must be 'minimum' or 'last'")
     az = np.asarray(table["azimuth"], float)
     toa = np.asarray(table["toa"], float)
     t1 = np.asarray(table["t1"], float)
@@ -68,12 +72,12 @@ def locate(table, vp=3600 * 1.73, vs=3600.0, legacy_refinement=False):
     grids = [np.arange(0, 360, 5), np.arange(0, 185, 5), np.arange(-0.15, 0.16, 0.01), np.arange(10, 1010, 10)]
     mis = _grid_misfit(*grids, az, toa, invv, t1)
     i = np.unravel_index(np.argmin(mis), mis.shape)
-    c = [float(g[k]) for g, k in zip(grids, i)]           # raw grid values, as originally
+    c = [float(g[k]) for g, k in zip(grids, i)]           # raw grid values (unrounded)
     coarse = RelLoc(*(round(v, 6) for v in c), float(mis[i]))
     fine = [np.arange(c[0] - 5, c[0] + 5, 0.1), np.arange(c[1] - 5, c[1] + 5, 0.1),
             np.arange(c[2] - 0.01, c[2] + 0.01, 0.001), np.arange(c[3] - 10, c[3] + 10, 1)]
     mis = _grid_misfit(*fine, az, toa, invv, t1)
-    if legacy_refinement:
+    if refinement == "last":
         flat = np.flatnonzero(mis.ravel() < coarse.misfit)
         if len(flat) == 0:
             return coarse

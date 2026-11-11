@@ -365,7 +365,7 @@ class PLDPicker:
     # -------------------------------------------------------------- figure
     def _display_traces(self, w):
         """Target and EGF filtered and cut from 0.5 s before to 1 s after the
-        pick, without the final taper (the original 'Target - EGF pair' plot)."""
+        pick, without the final taper."""
         p = w.pick
         tr_main, tr_egf = w.traces
         t_pick = float(tr_main.stats.sac[pld.PHASE_SETUP[p.phase][1]])

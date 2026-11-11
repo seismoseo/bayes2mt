@@ -78,8 +78,7 @@ def _finish_axes(ax, label, label_x):
     ax.xaxis.label.set_size(LABEL_SIZE)
     ax.yaxis.label.set_size(LABEL_SIZE)
     ax.minorticks_on()
-    ax.text(label_x, 1.05, label, transform=ax.transAxes, fontsize=20, fontweight="bold",
-            va="top", ha="right")
+    ax.text(label_x, 1.05, label, transform=ax.transAxes, fontsize=20, va="top", ha="right")
 
 
 # ------------------------------------------------------------------ panels
@@ -222,7 +221,7 @@ def plot_symbol_key(ax, mechanism, target_label, egf_label, rng, best_label="Bes
     ax.legend(handles=handles, handler_map={target: _BeachballHandler(list(mechanism))},
               prop={"size": 13}, loc="upper left", bbox_to_anchor=(0.05, 0.93), frameon=False,
               labelspacing=2.0)
-    y_best, y_ens = 0.25, 0.10          # as published (0.30, 0.15 in the export)
+    y_best, y_ens = 0.25, 0.10
     ax.add_patch(patches.Ellipse((0.15, y_best), width=0.15, height=0.08, angle=30, ec="k",
                                  linewidth=3, fill=False, zorder=5))
     ax.arrow(0.15, y_best, 0.05, -0.04, head_width=0.02, color="b", zorder=6)

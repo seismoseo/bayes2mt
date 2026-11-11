@@ -166,6 +166,29 @@ def test_relloc_recovers_grid_point():
     assert r.misfit < 1e-9
 
 
+def test_relloc_refinement_rules_on_demo_table():
+    tab = io.read_tauc_table(DEMO / "tauc_table.csv")
+    last = relloc.locate(tab, refinement="last")
+    best = relloc.locate(tab)
+    assert (last.azimuth, last.dip, last.L) == pytest.approx((107.6, 104.9, 65.0), abs=1e-6)
+    assert best.misfit <= last.misfit
+    with pytest.raises(ValueError):
+        relloc.locate(tab, refinement="nearest")
+
+
+def test_sdp_scale_invariant_and_solver_independent():
+    pytest.importorskip("cvxpy")
+    from bayes2mt import deterministic
+    tab = io.read_tauc_table(DEMO / "tauc_table.csv")
+    for plane in [(108.0, 58.0), (12.0, 81.0)]:
+        scs = deterministic.invert(tab, *plane, 6.228, 3.6)
+        cla = deterministic.invert(tab, *plane, 6.228, 3.6, solver="CLARABEL")
+        assert abs(scs.vr - cla.vr) < 0.01
+        big = tab.assign(tauc=10 * tab["tauc"])
+        r10 = deterministic.invert(big, *plane, 6.228, 3.6, solver="CLARABEL")
+        assert np.allclose(r10.m2, 100 * cla.m2, rtol=1e-4, atol=1e-12) and abs(r10.vr - cla.vr) < 1e-3
+
+
 def test_sdp_recovers_noise_free_model():
     pytest.importorskip("cvxpy")
     from bayes2mt import deterministic

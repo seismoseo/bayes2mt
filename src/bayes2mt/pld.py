@@ -83,24 +83,22 @@ def pl_deconv(y, x, dt, start, end, pad_n, iter_max=100):
     y, x     : target and EGF windows (same length, same sampling)
     dt       : sampling interval [s]
     start,end: support of the ASTF [s] on the deconvolution time axis
-    pad_n    : number of zeros appended to both windows (the original
-               analysis used ``pad_n = len(x)``)
+    pad_n    : number of zeros appended to both windows (Seo et al., 2026,
+               used ``pad_n = len(x)``)
     iter_max : number of Landweber iterations
 
     Returns (astf, t, vr): the ASTF and its time axis after removing the pad,
     and the variance reduction [%] of the waveform reconstruction
     ``x * astf`` over the unpadded window.
 
-    Arithmetic is identical to the original notebook implementation; the
-    reconstruction VR is evaluated once after the last iteration instead of
-    after every iteration (only the final value was ever used).
+    The reconstruction VR is evaluated once, after the last iteration.
     """
     F, t_F, vr = _pl_deconv_many(y, x, dt, start, [end], pad_n, iter_max)
     F, vr = F[0], float(vr[0])
     if pad_n == 0:
         return F, t_F, vr
-    # (-pad_n)//2 as in the original slice F[pad_n//2:-pad_n//2]; for odd
-    # pad_n this trims one more sample at the end than at the start
+    # remove the pad; for odd pad_n this trims one more sample at the end
+    # than at the start
     return F[pad_n // 2:-pad_n // 2], t_F[pad_n // 2:-pad_n // 2], vr
 
 
