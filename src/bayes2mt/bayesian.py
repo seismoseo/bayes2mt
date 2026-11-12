@@ -27,14 +27,17 @@ TARGET = "my_data"
 class Priors:
     """Uniform prior bounds (vmin, vmax) and proposal widths of x0..x5.
 
-    Defaults: x0 in [log10 0.01, log10 0.4] (half-duration sqrt(mu02) from
-    0.01 to 0.4 s), x1, x2, x4 in [-1, 1], x3, x5 in [log10 0.01, log10 1]
-    (moments in km and s).  Widen them for larger events.
+    Defaults: x0 in [log10 0.005, log10 0.4] (half-duration sqrt(mu02) from
+    0.005 to 0.4 s, i.e. tau_c from 10 ms to 0.8 s), x1, x2, x4 in [-1, 1],
+    x3, x5 in [log10 0.01, log10 1] (moments in km and s); proposal widths
+    0.01 except 0.1 for x3 and x5.  With these, the 41 events of Seo et al.
+    (2026), Mw 2.4-4.2, converge in the default run.  Widen the bounds for
+    larger events.
     """
     bounds: list = field(default_factory=lambda: [
-        (np.log10(0.01), np.log10(0.4)), (-1.0, 1.0), (-1.0, 1.0),
+        (np.log10(0.005), np.log10(0.4)), (-1.0, 1.0), (-1.0, 1.0),
         (np.log10(0.01), np.log10(1.0)), (-1.0, 1.0), (np.log10(0.01), np.log10(1.0))])
-    perturb_std: list = field(default_factory=lambda: [0.01, 0.01, 0.01, 0.1, 0.1, 0.1])
+    perturb_std: list = field(default_factory=lambda: [0.01, 0.01, 0.01, 0.1, 0.01, 0.1])
 
 
 @dataclass

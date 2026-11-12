@@ -23,7 +23,15 @@ conda activate bayes2mt
 python -m ipykernel install --user --name bayes2mt
 ```
 
-You can also run `pip install -e ".[all]"` in an existing environment. BayesBay needs a C++ compiler.
+In an existing environment, run `pip install -e ".[all]" jupyterlab` instead (from a release zip:
+`pip install "bayes2mt-<version>.zip[all]" jupyterlab`); without `[all]` the inversions are not available.
+BayesBay needs a C++ compiler. The example notebooks use the Jupyter kernel named `bayes2mt` (the `ipykernel`
+line above); with another kernel name, choose the kernel by hand.
+
+Figures use Helvetica when it is installed or when `BAYES2MT_FONT_DIR` points at a folder of Helvetica font
+files (regular and bold); otherwise Arial or DejaVu Sans, so only the font changes. bayes2mt (compiled
+velocity models) and ArviZ keep small files in `~/.cache`; if your home folder is read-only, set
+`XDG_CACHE_HOME` to a writable folder.
 
 The picker needs widgets (ipywidgets 8, for JupyterLab 4, Notebook 7 and VS Code). For the classic Jupyter
 Notebook 6, run `pip install "ipywidgets>=7.8,<8"` instead; with a mismatch the picker shows only `VBox(...)` or an
@@ -69,6 +77,9 @@ Step 2 takes about 2 min on 20 cores. The run is repeatable because the seed is 
 | `03_sdm_inversion` | Choose the fault plane, run the Bayesian inversion, check convergence, and draw the summary and corner plots. |
 
 The example event is the 2020-05-03 Mw 3.4 Haenam earthquake (South Korea), with 101 station–phase pairs (P, S and SmS).
+Its duration table (88 durations with VR ≥ 70 %) is that of event 16 in the archive of Seo et al. (2026), and
+example 03 gives the paper's values for that event within sampling variation; the medoid stress drop, which
+depends on the poorly resolved width, varies most.
 
 ## Using your own data
 
@@ -84,7 +95,10 @@ The example event is the 2020-05-03 Mw 3.4 Haenam earthquake (South Korea), with
   - Only ASTFs with VR ≥ 70 % are kept.
   - Take-off angles use a southern Korean Peninsula model by default. For another region, pass
     `model=geometry.taup_model("your_model.nd")`.
-- **Priors**: the default prior bounds (`bayesian.Priors`) suit about Mw 2.5–4. Widen them for larger events.
+- **Priors and proposal widths** (`bayesian.Priors`): the defaults allow τc from 10 ms to 0.8 s. With them,
+  all 41 earthquakes of Seo et al. (2026), Mw 2.4–4.2, converge in the default run (R-hat < 1.01). For larger
+  events, widen the bounds; for any event, check that the posterior of τc does not pile up at a bound. The
+  settings of each event of the paper are in its archive (`manuscript/sdm_paper/data/event_settings.csv`).
 
 ## Units and conventions
 
@@ -111,7 +125,7 @@ If you use bayes2mt, please cite
 > Korean Peninsula. *Journal of Geophysical Research: Solid Earth*.
 
 together with the methods and software below that your work relies on. The data and scripts of the paper are
-archived at [doi:10.5281/zenodo.19887457](https://doi.org/10.5281/zenodo.19887457).
+archived at [doi:10.5281/zenodo.19887456](https://doi.org/10.5281/zenodo.19887456).
 
 ### Methods
 

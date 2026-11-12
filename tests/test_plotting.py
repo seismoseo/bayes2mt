@@ -106,3 +106,23 @@ def test_only_the_posterior_ensemble_is_rasterized():
     vector = [a for a in ax.patches if not a.get_rasterized()]
     assert len(raster) == 100 and len(vector) == 2      # 50 ellipses + 50 arrows; the best ellipse and arrow
     plt.close(fig)
+
+
+def test_ellipse_panel_tick_labels_do_not_touch():
+    import matplotlib.pyplot as plt
+    from bayes2mt.plotting.inversion import _ellipse_ticks, plot_sdm_summary
+    post = _posterior()
+    best = {k: float(np.median(v)) for k, v in post.items()}
+    az = np.arange(0, 360, 20.0)
+    for extent in (100, 200, 300, 400, 600, 1000, 2500):
+        ticks = _ellipse_ticks(extent)
+        assert 3 <= len(ticks) <= 5 and 0 in ticks and abs(ticks).max() <= extent
+        fig, axes = plot_sdm_summary((60, -20), (96.2748, 58, 11), best, post, az, ["S"] * len(az),
+                                     np.full(len(az), 0.05), np.full(len(az), 0.05),
+                                     ellipse_extent=float(extent))
+        fig.canvas.draw()
+        boxes = [t.get_window_extent() for t in axes["b"].get_xticklabels() if t.get_text()]
+        assert all(a.x1 + 5 < b.x0 for a, b in zip(boxes, boxes[1:])), extent
+        labels = [t.get_text() for t in axes["key"].get_legend().get_texts()]
+        assert "Strike = 96.3°" in labels
+        plt.close(fig)

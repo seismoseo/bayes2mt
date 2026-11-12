@@ -86,6 +86,23 @@ def _nice(value, step):
     return float(np.ceil(value / step) * step)
 
 
+def _ellipse_ticks(extent):
+    """Ticks [m] of panel (b): the finest step of 10, 20, 50, 100, 200, 500 ...
+    m that puts at most five labels across [-extent, extent], or three when
+    the labels are five characters or longer (such as -1000)."""
+    step = 10.0
+    while True:
+        n = np.floor(extent / step + 1e-9)
+        if 2 * n + 1 <= (5 if len(f"{-n * step:.0f}") <= 4 else 3):
+            return np.arange(-n, n + 1) * step
+        step *= 2.5 if str(step)[0] == "2" else 2.0
+
+
+def _degrees(value):
+    """Angle label with at most one decimal and no trailing '.0'."""
+    return f"{round(float(value), 1):g}"
+
+
 def plot_relative_location(ax, offset, mechanism, extent=None, guide_length=None, ball_width=None):
     """Panel (a): EGF at the origin (red circle), target beach ball at
     ``offset`` = (east, north) [m], dashed line along strike, and the chosen
@@ -153,7 +170,7 @@ def plot_ellipses(ax, best, samples, indices, extent=None):
     if best["v0"] > 0:
         ax.arrow(-half * np.cos(rk), -half * np.sin(rk), 2 * half * np.cos(rk),
                  2 * half * np.sin(rk), width=10, color="b", zorder=20)
-    ticks = np.arange(-extent, extent + 1e-9, 100.0 if extent <= 400 else _nice(extent / 3, 100.0))
+    ticks = _ellipse_ticks(extent)
     ticks = ticks.astype(int) if np.allclose(ticks, np.round(ticks)) else ticks
     ax.set(xlim=(-extent, extent), ylim=(-extent, extent), aspect="equal",
            xlabel="Along strike (m)", ylabel="Along dip (m)")
@@ -206,7 +223,7 @@ def plot_symbol_key(ax, mechanism, target_label, egf_label, rng, best_label="Bes
         mlines.Line2D([], [], color="white", marker="o", markerfacecolor="none", markeredgecolor="r",
                       markeredgewidth=2, markersize=10, label=egf_label),
         mlines.Line2D([], [], color="gray", linestyle="--", linewidth=2, alpha=0.7,
-                      label=f"Strike = {float(mechanism[0])}°"),
+                      label=f"Strike = {_degrees(mechanism[0])}°"),
         mlines.Line2D([], [], color="none", marker="o", markeredgecolor="b", markerfacecolor="none",
                       markersize=8, markeredgewidth=2, label="Direct S (observed)"),
         mlines.Line2D([], [], color="none", marker="o", markeredgecolor="g", markerfacecolor="none",

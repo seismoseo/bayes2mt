@@ -208,7 +208,7 @@ def test_bayesian_starting_states_are_seeded():
     va = [a[i]["my_param_space"]["m0"][0] for i in range(3)]
     vb = [b[i]["my_param_space"]["m0"][0] for i in range(3)]
     rs = np.random.RandomState(620)
-    assert va == vb and va[0] == rs.uniform(np.log10(0.01), np.log10(0.4))
+    assert va == vb and va[0] == rs.uniform(np.log10(0.005), np.log10(0.4))
 
 
 def test_seeded_runs_repeat_and_continuations_do_not():
@@ -229,3 +229,11 @@ def test_seeded_runs_repeat_and_continuations_do_not():
     # a continued chain draws from a new stream, not the first call's again
     assert bayesian._chain_seed(620, 1, 0) == 621 != bayesian._chain_seed(620, 1, 300)
     assert cont.shape[1] > first.shape[1]
+
+
+def test_default_priors_allow_durations_down_to_10_ms():
+    from bayes2mt import bayesian
+    pri = bayesian.Priors()
+    tauc_min, tauc_max = 2 * 10 ** np.array(pri.bounds[0])        # tau_c = 2 * 10**x0
+    assert tauc_min == pytest.approx(0.010) and tauc_max == pytest.approx(0.8)
+    assert pri.perturb_std == [0.01, 0.01, 0.01, 0.1, 0.01, 0.1]
