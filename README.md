@@ -124,8 +124,8 @@ If you use bayes2mt, please cite
 > small intraplate earthquakes: insights from a dense seismic network and Moho-reflected phases in the southern
 > Korean Peninsula. *Journal of Geophysical Research: Solid Earth*.
 
-together with the methods and software below that your work relies on. The data and scripts of the paper are
-archived at [doi:10.5281/zenodo.19887456](https://doi.org/10.5281/zenodo.19887456).
+together with the methods and software below that your work relies on. The data and scripts of the paper, with this
+version of bayes2mt, are archived at [doi:10.5281/zenodo.24281983](https://doi.org/10.5281/zenodo.24281983).
 
 ### Methods
 
